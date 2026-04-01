@@ -35,6 +35,18 @@ public class Bst {
             y.right = n;
         }
     }
+    Node search(int key){
+        Node x = root;
+        while(x != null && x.key != key){
+            if(key < x.key){
+                x = x.left;
+            } else {
+                x = x.right;
+            }
+        }
+        return x;
+    }
+
 
     /**
      *  inorder traversal order
@@ -155,6 +167,61 @@ public class Bst {
             y = y.parent;//until y == root - termination
         }
         return y;
+    }
+    /**
+     *  Delect
+     *  case1 - 0 children: remove directly
+     *  case2 - 1child: let the child move up,then instead of parent node
+     *  case3 - 2 children: replace x with its successor, then delete the successor from its old position
+     *         56
+     *       /    \
+     *     26      200
+     *    /  \
+     *  18   28
+     *  / \   /
+     * 12 24 27
+     *
+     *  helper function - replace subtree rooted ar u with subtree rooted at v
+     */
+    void delect(Node z){
+        //empty
+        if(z == null) return;
+        //case1 and case2 , check subtree;
+        if(z.left == null){
+            transplant(z,z.right);
+        }
+        else if(z.right == null){
+            transplant(z,z.left);
+        }
+        else{
+            Node y = treeMinimum(z.right);//find successor
+            //successotr 不是z的直接右孩子，而是下子的右子
+            if(y.parent != z){
+                //handle 28
+                transplant(y,y.right);//28.left = null, still y = 27
+                y.right = z.right; // y.right = 28
+                y.right.parent = y ; // 28.parent = y
+            }
+            //replace origin node with successor
+            transplant(z,y);
+            y.left = z.left;
+            y.left.parent = y;
+        }
+    }
+
+    //parent pointer must connect with at least one subtree;
+    private void transplant(Node u, Node v){
+        if(u.parent == null){
+            root = v;
+        } //determine the position of x
+        else if( u == u.parent.left){
+            u.parent.left = v;
+        } else{
+            u.parent.right = v;
+        }
+        if(v != null){
+            v.parent = u.parent;
+        }
     }
 
 
