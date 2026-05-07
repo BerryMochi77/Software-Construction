@@ -35,6 +35,7 @@ public class Bst {
             y.right = n;
         }
     }
+    
     Node search(int key){
         Node x = root;
         while(x != null && x.key != key){
